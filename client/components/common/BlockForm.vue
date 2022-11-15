@@ -84,6 +84,9 @@ export default {
           })
         ));
       }
+      if(this.hasAnalogBody){
+        options.body = JSON.stringify(this.body);
+      }
 
       try {
         const r = await fetch(this.url, options);

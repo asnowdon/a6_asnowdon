@@ -5,14 +5,16 @@ import createPersistedState from 'vuex-persistedstate';
 Vue.use(Vuex);
 
 /**
- * Storage for data that needs to be accessed from various compoentns.
+ * Storage for data that needs to be accessed from various component.
  */
 const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
     freets: [], // All freets created in the app
     username: null, // Username of the logged in user
-    alerts: {} // global success/error messages encountered during submissions to non-visible forms
+    alerts: {}, // global success/error messages encountered during submissions to non-visible forms
+    followers: [], //All followers of username
+    visitingUsername: "jeez"
   },
   mutations: {
     alert(state, payload) {
@@ -45,6 +47,23 @@ const store = new Vuex.Store({
        */
       state.freets = freets;
     },
+    updateFollowers(state, followers) {
+      /**
+       * Update the stored followers to the provided followers.
+       * @param followers - followers to store
+       */
+      console.log(followers);
+      state.followers = followers;
+    },
+    updateVisitingUsername(state, visitingUsername) {
+      /**
+       * Update the stored visiting acct username to the provided following.
+       * @param visiting - visiting account username to store
+       */
+      state.visitingUsername = visitingUsername;
+    },
+
+    
     async refreshFreets(state) {
       /**
        * Request the server for the currently available freets.
