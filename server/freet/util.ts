@@ -1,6 +1,7 @@
 import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
 import type {Freet, PopulatedFreet} from '../freet/model';
+import LikeCollection from '../like/collection';
 
 // Update this if you add a property to the Freet type!
 type FreetResponse = {
@@ -9,6 +10,8 @@ type FreetResponse = {
   dateCreated: string;
   content: string;
   dateModified: string;
+  likes: number;
+  bestFreets:number
 };
 
 /**
@@ -34,15 +37,19 @@ const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse =
   };
   const {username} = freetCopy.authorId;
   delete freetCopy.authorId;
+  // const allLikes = await LikeCollection.findAllLikesOfFreetId(freetCopy._id.toString());
   return {
     ...freetCopy,
     _id: freetCopy._id.toString(),
     author: username,
     dateCreated: formatDate(freet.dateCreated),
-    dateModified: formatDate(freet.dateModified)
+    dateModified: formatDate(freet.dateModified),
+    likes: freet.likes,
+    bestFreets: freet.bestFreets
   };
 };
 
 export {
-  constructFreetResponse
+  constructFreetResponse,
+  FreetResponse
 };

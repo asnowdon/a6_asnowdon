@@ -11,21 +11,35 @@
       </h1>
     </div>
     <div class="right">
-      <router-link to="/">
-        Home
-      </router-link>
-      <router-link
-        v-if="$store.state.username"
-        to="/account"
-      >
-        Account
-      </router-link>
-      <router-link
-        v-else
-        to="/login"
-      >
-        Login
-      </router-link>
+      <ul>  
+        <li>
+          <router-link to="/">
+            Home
+          </router-link>
+        </li>
+        <li>  
+          <router-link
+          v-if="$store.state.username"
+          to="/account"
+        >
+          Account
+        </router-link>
+
+        </li>
+
+        <router-link
+          v-if="$store.state.username"
+          to="/profile"
+        >
+          Profile
+        </router-link>
+        <router-link
+          v-else
+          to="/login"
+        >
+          Login
+        </router-link>
+      </ul>
     </div>
     <section class="alerts">
       <article
@@ -41,38 +55,59 @@
 
 <style scoped>
 nav {
-    padding: 1vw 2vw;
+    /*padding: 1vw 2vw;*/
     background-color: #ccc;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-}
+    position: fixed;
+    height: 100%; /* Full height */
+  }
 
 .title {
     font-size: 32px;
     margin: 0 5px;
+    margin-bottom: 280px;
 }
 
 img {
+    margin-left: 120px;
     height: 32px;
+    margin-bottom: 280px;
 }
 
+ul {
+  list-style-type: none;
+
+}
+
+li{
+  text-align: left;
+  margin-top: 40px;
+  margin-bottom: 40px;
+
+
+}
 .left {
 	display: flex;
 	align-items: center;
 }
 
-.right {
+.right  {
+   /* align-items: center;*/
+   /* float:left;*/
+    margin-left: 100px;
     font-size: 20px;
-    display: grid;
+    display: block;
     gap: 16px;
-    grid-auto-flow: column;
-    align-items: center;
+    /*grid-auto-flow: column;*/
+    position: absolute;
+    /*align-items: center;*/
 }
 
 .right a {
-    margin-left: 5px;
+  margin: 0;
+    /*margin-left: 5px;*/
 }
 
 .alerts {

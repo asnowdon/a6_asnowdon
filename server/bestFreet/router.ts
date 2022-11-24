@@ -51,9 +51,11 @@ router.get(
       next();
       return;
     }else if(req.query.freetId !== undefined){
-      console.log("freet ID spot");
+      // console.log("freet ID spot");
       const allLikesOfFreet = await bestFreetCollection.findByFreet(req.query.freetId as string);
-      res.status(200).json(allLikesOfFreet);
+      const response = allLikesOfFreet.map(util.constructBestFreetResponse);
+
+      res.status(200).json(response);
     }else{
       res.status(403).json({error:{inputs:'value must be inputted.'}});
     }
@@ -70,7 +72,9 @@ router.get(
     const allBestFreetsOfUser = await bestFreetCollection.findByUserId(user._id);
     // const response = authorFreets.map(util.constructFreetResponse);
     // console.log(userFollowers);
-    res.status(200).json(allBestFreetsOfUser);
+    const response =await Promise.all(allBestFreetsOfUser.map(util.constructBestFreetResponse)); 
+    console.log(response);
+    res.status(200).json(response);
   }
 );
 
@@ -78,7 +82,7 @@ router.get(
 /**
  * bestFreet a freet. Only works if you haven't best freeted a freet within 24 hours
  *
- * @name POST /api/bestFreet
+ * @name POST /api/bestFreets
  *
  * @param {Types.ObjectId} freetId - The id of the freet
  * @return {like} - The created like
@@ -95,8 +99,16 @@ router.post(
     bestFreetValidator.isBestFreetElligible // (userId = req.session.userId) 
   ],
   async (req: Request, res: Response) => {
+    // console.log(req.params);
+    // console.log(req.body);
+    if (!req.body.freetId) {
+      res.status(400).json({
+        error: 'No freetId.'
+      });
+      return;
+    }
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const bestFreet = await bestFreetCollection.addOne(userId, req.params.freetId);
+    const bestFreet = await bestFreetCollection.addOne(userId, req.body.freetId);
     // req.userId = followerFollowing._id.toString();
     res.status(201).json({
       message: `Your bestFreet has been created successfully`,

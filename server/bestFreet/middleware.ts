@@ -51,7 +51,8 @@ import e from 'express';
  * makes sure user can use a bestFreet
  */
  const isBestFreetElligible = async (req: Request, res: Response, next: NextFunction) => {
-  const validFormat = Types.ObjectId.isValid(req.params.freetId);
+
+  const validFormat = Types.ObjectId.isValid(req.body.freetId);
   const bestFreets = validFormat ? await bestFreetCollection.findByUserId(req.session.userId) : '';
   // console.log(validFormat);
   // console.log("bestfreets");
@@ -66,9 +67,7 @@ import e from 'express';
     // console.log(hour24ago);
       if(latestBestFreet.dateUsed.getTime() > hour24ago){
         res.status(403).json({
-          error: {
-            freetNotFound: `User Id ${req.session.userId} has no Best Freet's available.`
-          }
+          error: `You already used your Best Freet today!`
         });
         return;
         //fail

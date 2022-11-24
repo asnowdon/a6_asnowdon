@@ -4,6 +4,7 @@ import FreetCollection from './collection';
 import * as userValidator from '../user/middleware';
 import * as freetValidator from '../freet/middleware';
 import * as util from './util';
+import LikeCollection from '../like/collection';
 
 const router = express.Router();
 
@@ -35,7 +36,17 @@ router.get(
     }
 
     const allFreets = await FreetCollection.findAll();
+    // const allLikes = await Promise.all(allFreets.map((freet) =>{LikeCollection.findAllLikesOfFreetId(freet._id)}));
+    // console.log("all likes");
+    // console.log(allLikes.length);
     const response = allFreets.map(util.constructFreetResponse);
+    response.forEach(element => {
+      
+    });
+    // const response = await Promise.all(allFreets.map(async (freet) => {
+    //   return await util.constructFreetResponse(freet);
+    //   // return i + 1;
+    // }));
     res.status(200).json(response);
   },
   [
@@ -43,7 +54,14 @@ router.get(
   ],
   async (req: Request, res: Response) => {
     const authorFreets = await FreetCollection.findAllByUsername(req.query.author as string);
+    const allLikes = await Promise.all(authorFreets.map((freet) =>{LikeCollection.findAllLikesOfFreetId(freet._id)}));
+    console.log("all likes");
+    console.log(allLikes.length);
     const response = authorFreets.map(util.constructFreetResponse);
+    // const response = await Promise.all(autho.map(async (freet) => {
+    //   return await util.constructFreetResponse(freet);
+    //   // return i + 1;
+    // }));
     res.status(200).json(response);
   }
 );

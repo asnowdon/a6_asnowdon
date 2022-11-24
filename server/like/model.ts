@@ -13,6 +13,7 @@ import UserModel from '../user/model';
 export type like = {
   userId: Types.ObjectId;
   freetId: Types.ObjectId;
+  username: String;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table

@@ -4,7 +4,9 @@
 <template>
   <main>
     <FollowUserForm />
-    <h3> {{$store.state.followers.length}} followers </h3>
+    <!-- <h3> {{$store.state.likes}} </h3> -->
+
+    <!-- <h3> {{$store.state.followers.length}} followers </h3> -->
     <section>
       <header>
         <h2>Account settings for @{{ $store.state.username }}</h2>

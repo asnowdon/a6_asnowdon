@@ -17,6 +17,7 @@ export default {
       callback: () => {
         const message = 'Successfully followed user!';
         this.$set(this.alerts, message, 'success');
+        this.$store.commit('refreshFollowers');
         setTimeout(() => this.$delete(this.alerts, message), 3000);
       }
     };

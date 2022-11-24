@@ -12,6 +12,7 @@ export default {
       method: 'POST',
       hasBody: true,
       setUsername: true,
+      setLikes: true,
       fields: [
         {id: 'username', label: 'Username', value: ''},
         {id: 'password', label: 'Password', value: ''}
@@ -24,6 +25,11 @@ export default {
         });
       }
     };
+  },
+  mounted(){
+    fetch(`/api/likes?freetId=${this.freet._id}`).then(res => res.json()).then(res => {
+      this.likesCount = res.length;
+    });
   }
 };
 </script>

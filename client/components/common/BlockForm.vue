@@ -102,6 +102,17 @@ export default {
           this.$store.commit('setUsername', res.user ? res.user.username : null);
         }
 
+        // if(this.setLikes){
+        //   fetch(`/api/likes?username=${this.$store.state.username}`).then(res2 => res2.json()).then(res2 => {
+        //     this.$store.commit('setLikes',res2);
+        //   });
+        // }
+
+        if(this.resetLikes){
+          this.$store.commit('setLikes',new Array());
+        }
+
+
         if (this.refreshFreets) {
           this.$store.commit('refreshFreets');
         }

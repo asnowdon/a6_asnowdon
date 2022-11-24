@@ -10,6 +10,7 @@
         <router-link :to="{ name: 'visitingAccount', params: { username: freet.author } }">
           @{{ freet.author }}
         </router-link>
+
       </h3>
       <div
         v-if="$store.state.username === freet.author"
@@ -36,7 +37,10 @@
         <button @click="deleteFreet">
           🗑️ Delete
         </button>
+     
       </div>
+
+
     </header>
     <textarea
       v-if="editing"
@@ -54,6 +58,29 @@
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
     </p>
+
+      <div
+        class="actions"
+      >
+        {{freet.likes}}
+        <button @click="likeFreet" 
+                v-if="!alreadyLiked">
+            <3
+        </button>   
+
+        <button @click="unlikeFreet" 
+                v-if="alreadyLiked">
+            <3 'ed
+        </button>   
+        
+        {{freet.bestFreets}}
+        <button @click="bestFreetFreet">
+            <<33
+        </button>   
+      </div>
+
+      <!-- {{$store.state.likes}} -->
+
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -77,11 +104,23 @@ export default {
     }
   },
   data() {
+    alreadyLiked:false
     return {
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
-      alerts: {} // Displays success/error messages encountered during freet modification
+      alerts: {}, // Displays success/error messages encountered during freet modification
+      likesCount: null,
+      bestFreetCount: null,
+      // alreadyLiked: []
     };
+  },
+  created() {
+    this.$store.state.likes.forEach(like => {
+      if(like.freetId  === this.freet._id){
+        this.alreadyLiked = true;
+      }
+    });
+    this.bestFreetCount = this.$store.state.likes;
   },
   methods: {
     startEditing() {
@@ -111,6 +150,107 @@ export default {
         }
       };
       this.request(params);
+    },
+    async reactFreet(params) {
+      /**
+       * react this freet.
+       */     
+      const options = {
+        method: params.method, 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({freetId: this.freet._id})
+      };
+      try {
+        var r;
+        var reqUrl;
+        if(params.url){
+          reqUrl = params.url;
+        }
+        else if(params.reaction == "like"){
+          reqUrl = "/api/likes";
+        }else if (params.reaction == "bestFreet"){
+          reqUrl = "/api/bestFreets";
+        }
+
+        r = await fetch(reqUrl, options);
+        if (!r.ok) {
+          const res = await r.json();
+          throw new Error(res.error);
+        }
+        const res = await r.json();
+
+
+        //this.$store.commit('refreshFreets');
+        //this.$store.commit('incrementLikesCount');
+        params.callback(res);
+
+        
+      } catch (e) {
+        this.$set(this.alerts, e, 'error');
+        setTimeout(() => this.$delete(this.alerts, e), 3000);
+      }
+    },
+    async likeFreet() {
+      /**
+       * likes this freet.
+       */
+      //if the $store.state.likes contains this like,
+      //      we dislike it (delete like)
+      const params = {
+        method: 'POST',
+        message: 'Successfully liked freet!',
+        reaction: "like",
+        callback: (like) => {
+          this.$set(this.alerts, params.message, 'success');
+          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          //this.$store.commit('addLike',res.like);
+          this.$store.commit('refreshFreets');
+          this.$store.commit('refreshLikes');
+
+          this.$store.commit('addLike',like)
+          this.alreadyLiked = true
+          // this.likesCount += 1;
+
+        }
+      };
+      this.reactFreet(params);
+    },
+    async unlikeFreet() {
+      /**
+       * unlikes this freet.
+       */
+      const params = {
+        method: 'DELETE',
+        message: 'Successfully un-liked freet!',
+        url: `/api/likes/${this.freet._id}`,
+        callback: (res) => {
+          this.$set(this.alerts, params.message, 'success');
+          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          this.alreadyLiked = false;
+          this.$store.commit('refreshFreets');
+          // this.likesCount -= 1;
+        }
+      };
+      this.reactFreet(params);
+    },
+
+    async bestFreetFreet() {
+      /**
+       * bestFreets this freet.
+       */
+        const params = {
+        method: 'POST',
+        message: 'Successfully bestFreeted freet!',
+        reaction: "bestFreet",
+        callback: (res) => {
+          this.$set(this.alerts, params.message, 'success');
+          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
+          //this.$store.commit('addLike',res.like);
+          this.$store.commit('refreshFreets');
+          this.alreadybestFreeted = true;
+        }
+      };
+      this.reactFreet(params);
     },
     submitEdit() {
       /**
@@ -173,5 +313,6 @@ export default {
     border: 1px solid #111;
     padding: 20px;
     position: relative;
+    background-color:white;
 }
 </style>

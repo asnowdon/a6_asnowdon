@@ -1,12 +1,15 @@
 import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
-import type {User} from './model';
+import type {bestFreet} from './model';
+import type {Freet, PopulatedFreet} from '../freet/model';
+import FreetCollection from '../freet/collection';
+import * as freetUtil from '../freet/util';
 
 // Update this if you add a property to the User type!
-type UserResponse = {
-  _id: string;
-  username: string;
-  dateJoined: string;
+type BestFreetResponse = {
+  userId: string;
+  freet: freetUtil.FreetResponse;
+  dateUsed: string;
 };
 
 /**
@@ -25,20 +28,19 @@ const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:
  * @param {HydratedDocument<User>} user - A user object
  * @returns {UserResponse} - The user object without the password
  */
-const constructUserResponse = (user: HydratedDocument<User>): UserResponse => {
-  const userCopy: User = {
-    ...user.toObject({
+const constructBestFreetResponse = async (BestFreet: HydratedDocument<bestFreet>): Promise<BestFreetResponse> => {
+  const bestFreetCopy: bestFreet = {
+    ...BestFreet.toObject({
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  delete userCopy.password;
   return {
-    ...userCopy,
-    _id: userCopy._id.toString(),
-    dateJoined: formatDate(user.dateJoined)
+    userId: bestFreetCopy.userId.toString(),
+    freet: freetUtil.constructFreetResponse(await FreetCollection.findOne(bestFreetCopy.freetId)),
+    dateUsed: formatDate(bestFreetCopy.dateUsed)
   };
 };
 
 export {
-  constructUserResponse
+  constructBestFreetResponse
 };

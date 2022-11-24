@@ -1,12 +1,16 @@
 import type {HydratedDocument} from 'mongoose';
 import moment from 'moment';
-import type {User} from './model';
+import type {like} from './model';
+import {Types} from 'mongoose';
+
+
+import UserCollection from '../user/collection';
 
 // Update this if you add a property to the User type!
-type UserResponse = {
-  _id: string;
+type LikeResponse = {
+  userId: Types.ObjectId;
   username: string;
-  dateJoined: string;
+  freetId: Types.ObjectId;
 };
 
 /**
@@ -25,20 +29,19 @@ const formatDate = (date: Date): string => moment(date).format('MMMM Do YYYY, h:
  * @param {HydratedDocument<User>} user - A user object
  * @returns {UserResponse} - The user object without the password
  */
-const constructUserResponse = (user: HydratedDocument<User>): UserResponse => {
-  const userCopy: User = {
-    ...user.toObject({
+const constructLikeResponse = async (like: HydratedDocument<like>): Promise<LikeResponse> => {
+  const likeCopy: like = {
+    ...like.toObject({
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  delete userCopy.password;
+  const user = await UserCollection.findOneByUserId(likeCopy.userId);
   return {
-    ...userCopy,
-    _id: userCopy._id.toString(),
-    dateJoined: formatDate(user.dateJoined)
+    ...likeCopy,
+    username: user.username
   };
 };
 
 export {
-  constructUserResponse
+  constructLikeResponse
 };

@@ -73,6 +73,7 @@ router.get(
     descriptionValidator.isValidDescriptionContent
   ],
   async (req: Request, res: Response) => {
+    console.log(req.body.content);
     const description = await descriptionCollection.updateOne(req.session.userId, req.body.content);
     res.status(200).json({
       message: 'Your description was updated successfully.',

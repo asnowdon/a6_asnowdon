@@ -2,6 +2,7 @@ import type {HydratedDocument, Types} from 'mongoose';
 import type {Freet} from './model';
 import FreetModel from './model';
 import UserCollection from '../user/collection';
+import LikeCollection from '../like/collection';
 
 /**
  * This files contains a class that has the functionality to explore freets
@@ -25,7 +26,9 @@ class FreetCollection {
       authorId,
       dateCreated: date,
       content,
-      dateModified: date
+      dateModified: date,
+      likes:0,
+      bestFreets:0
     });
     await freet.save(); // Saves freet to MongoDB
     return freet.populate('authorId');

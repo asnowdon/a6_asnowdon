@@ -62,8 +62,12 @@ class descriptionCollection {
    * @return {Promise<HydratedDocument<description>>} - The newly updated freet
    */
    static async updateOne(userId: Types.ObjectId | string, content: string): Promise<HydratedDocument<description>> {
-    const description = await descriptionModel.findOne({userId: userId});
-    description.content = content;
+    var description = await descriptionModel.findOne({userId: userId});
+    if(description == null){
+      description = await descriptionCollection.addOne(userId,content);
+    }else{     
+       description.content = content;
+    }
     await description.save();
     return description.populate('userId');
   }

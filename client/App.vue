@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <header>
-      <NavBar />
+      <NavBar   style="width:35%"/>
     </header>
-    <router-view />
+    <router-view style="margin-left:35%"/>
   </div>
 </template>
 
@@ -31,7 +31,9 @@ export default {
 <style>
 * {
   box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
 }
+
 
 body {
   height: 100vh;

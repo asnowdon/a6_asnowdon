@@ -1,4 +1,5 @@
 import type {HydratedDocument, Schema, Types} from 'mongoose';
+import FreetModel from '../freet/model';
 import type {bestFreet} from './model';
 import bestFreetModel from './model';
 
@@ -24,6 +25,9 @@ class bestFreetCollection {
         freetId,
         dateUsed: date
       });
+      const freet = await FreetModel.findOne({_id: freetId});
+      freet.bestFreets += 1;
+      await freet.save();
       await bestFreet.save(); // Saves user to MongoDB
       return bestFreet;
     }
@@ -38,6 +42,9 @@ class bestFreetCollection {
    */
   static async deleteOne(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<boolean> {
     const like = await bestFreetModel.deleteOne({freetId: freetId, userId: userId});
+    const freet = await FreetModel.findOne({_id: freetId});
+    freet.bestFreets -= 1;
+    await freet.save();
     return like !== null;
   }
 

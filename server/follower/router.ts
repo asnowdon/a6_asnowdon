@@ -61,8 +61,8 @@ router.get(
       return;
     }
     const userFollowers = await followerCollection.findAllFollowersOfUsername(req.query.username as string);
-    console.log("user followers");
-    console.log(userFollowers);
+    // console.log("user followers");
+    // console.log(userFollowers);
     // const response = authorFreets.map(util.constructFreetResponse);
     // console.log(userFollowers);
     res.status(200).json(userFollowers);
@@ -101,8 +101,8 @@ router.post(
   //user thats logged in follows req.body.id
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    console.log(req.body);
-    console.log(req.query);
+    // console.log(req.body);
+    // console.log(req.query);
 
     const follower = await followerCollection.addOne(req.body.username as string, userId); //userId is a follower of 
     // const follower = await followerCollection.addOne(req.query.username as string, userId); //userId is a follower of 
@@ -136,7 +136,7 @@ router.post(
     followerValidator.isFollowerExists 
   ],
   async (req: Request, res: Response) => {
-    console.log(req.params);
+    // console.log(req.params);
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
     await followerCollection.deleteOne(userId, req.params.id);
     res.status(200).json({

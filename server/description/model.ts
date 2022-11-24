@@ -27,7 +27,8 @@ const descriptionSchema = new Schema({
   // The user id of the account they follow
   content: {
     type: String,
-    required: true
+    required: true,
+    default:""
   }
 });
 

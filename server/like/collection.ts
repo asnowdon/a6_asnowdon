@@ -1,4 +1,5 @@
 import type {HydratedDocument, Schema, Types} from 'mongoose';
+import FreetModel from '../freet/model';
 import UserCollection from '../user/collection';
 import type {like} from './model';
 import likeModel from './model';
@@ -12,7 +13,7 @@ kalsjdklajdklsajdklsajlkdjaskldjasd * additional operations in this file.
  */
 class LikeCollection {
   /**
-   * Add a new follower
+   * Add a new like
    *
    * @param {string} freetId - The freetId of the freet
    * @param {string} userId - The userId of the user
@@ -20,6 +21,10 @@ class LikeCollection {
    */
      static async addOne(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<HydratedDocument<like>> {
       const like = new likeModel({freetId, userId});
+      const freet = await FreetModel.findOne({_id: freetId});
+      // console.log(freet. )
+      freet.likes=  freet.likes == NaN?  1: freet.likes+1;
+      await freet.save();
       await like.save(); // Saves user to MongoDB
       return like;
     }
@@ -34,6 +39,9 @@ class LikeCollection {
    */
   static async deleteOne(userId: Types.ObjectId | string, freetId: Types.ObjectId | string): Promise<boolean> {
     const like = await likeModel.deleteOne({freetId: freetId, userId: userId});
+    const freet = await FreetModel.findOne({_id: freetId});
+    freet.likes -= 1;
+    await freet.save();
     return like !== null;
   }
 

@@ -14,7 +14,10 @@ const store = new Vuex.Store({
     username: null, // Username of the logged in user
     alerts: {}, // global success/error messages encountered during submissions to non-visible forms
     followers: [], //All followers of username
-    visitingUsername: "jeez"
+    visitingUsername: null,
+    likes: [],
+    likesCount: null,
+    bestFreets:[]
   },
   mutations: {
     alert(state, payload) {
@@ -47,13 +50,29 @@ const store = new Vuex.Store({
        */
       state.freets = freets;
     },
+    updateBestFreets(state, bestFreets) {
+      /**
+       * Update the stored bestFreets to the provided bestFreets.
+       * @param bestFreets - bestFreets to store
+       */
+      state.bestFreets = bestFreets;
+    },
+    
     updateFollowers(state, followers) {
       /**
        * Update the stored followers to the provided followers.
        * @param followers - followers to store
        */
-      console.log(followers);
+      // console.log(followers);
       state.followers = followers;
+    },
+    addFollower(state, follower) {
+      /**
+       * Update the stored followers with follower.
+       * @param follower - follower to store
+       */
+      // console.log(followers);
+      state.followers.push(follower);
     },
     updateVisitingUsername(state, visitingUsername) {
       /**
@@ -62,8 +81,62 @@ const store = new Vuex.Store({
        */
       state.visitingUsername = visitingUsername;
     },
+    updateLikesCount(state, likesCount) {
+      /**
+       * Update the stored likesCount to the provided likesCount.
+       * @param likesCount - likesCount to store
+       */
+      // console.log(followers);
+      state.likesCount = likesCount;
+    },
+    incrementLikesCount(state) {
+      /**
+       * Update the stored likesCount to the provided likesCount.
+       * @param likesCount - likesCount to store
+       */
+      // console.log(followers);
+      state.likesCount += 1;
+    },
+    setLikes(state, likes) {
+      /**
+       * Update the stored likes array to the specified ones.
+       * @param likes - new likes array to set
+       */
+      // var likesSet = new Set(likes);
 
-    
+      state.likes = likes;
+    },
+    addLike(state,like) {
+      /**
+       * Update the stored likes to include the provided like.
+       * @param like - like to store
+       */
+      state.likes.push(like);
+    },
+    async refreshLikes(state) {
+      /**
+       * Request the server for the currently available freets.
+       */
+      // const url = `/api/likes?username=${state.username}`;
+      // const res = await fetch(url).then(async r => r.json());
+      // state.likes = res; 
+      fetch(`/api/likes?username=${state.username}`).then(res2 => res2.json()).then(res2 => {
+        // this.$store.commit('setLikes',res2);
+        state.likes = res2;
+      });               
+    },
+    async refreshFollowers(state) {
+      /**
+       * Request the server for the currently available freets.
+       */
+      // const url = `/api/likes?username=${state.username}`;
+      // const res = await fetch(url).then(async r => r.json());
+      // state.likes = res; 
+      fetch(`/api/followers?username=${state.visitingUsername}`).then(res => res.json()).then(res => {
+        // this.$store.commit('setLikes',res2);
+        state.followers = res;
+      });               
+    },
     async refreshFreets(state) {
       /**
        * Request the server for the currently available freets.

@@ -41,19 +41,22 @@ router.get(
     // Check if authorId query parameter was supplied
     // console.log("IN ROUTER");
     // console.log(req.query);
+    // console.log(req.params);
     if (!req.query.username && !req.query.freetId) {
       res.status(400).json({
         error: 'A value Must Be Inputted.'
       });
+      return;
     } else if (req.query.username !== undefined) {
       next();
-      return;
     }else if(req.query.freetId !== undefined){
-      console.log("freet ID spot");
+      // console.log("freet ID spot");
       const allLikesOfFreet = await likeCollection.findAllLikesOfFreetId(req.query.freetId as string);
+      const likeResponses = allLikesOfFreet.map(util.constructLikeResponse)
       res.status(200).json(allLikesOfFreet);
     }else{
       res.status(403).json({error:{inputs:'value must be inputted.'}});
+      return;
     }
     // console.log(allFollowers);
     // const response = allFreets.map(util.constructFreetResponse);
@@ -62,12 +65,14 @@ router.get(
     likeValidator.isUserExists
   ],
   async (req: Request, res: Response, next: NextFunction) => {
-    // console.log("in NEXT");
+    console.log("in NEXT");
     // console.log(req.query);
     const allLikesOfUser = await likeCollection.findAllLikesOfUsername(req.query.username as string);
+    // console.log(allLikesOfUser);
     // const allLikesOfUser = await likeCollection.findAllLikesOfUserId(req.query.userId as string);
     // const response = authorFreets.map(util.constructFreetResponse);
     // console.log(userFollowers);
+    const likeResponses = allLikesOfUser.map(util.constructLikeResponse)
     res.status(200).json(allLikesOfUser);
   }
 );
@@ -87,11 +92,13 @@ router.post(
   '/:freetId?',
   [
     userValidator.isUserLoggedIn,
-    likeValidator.isFreetExists //where does freet id have to be
+    likeValidator.isFreetExists, //where does freet id have to be
+    likeValidator.isLikeAlreadyExists
+
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    const like = await likeCollection.addOne(userId, req.params.freetId);
+    const like = await likeCollection.addOne(userId, req.body.freetId);
     // req.userId = followerFollowing._id.toString();
     res.status(201).json({
       message: `Your like has been created successfully`,
