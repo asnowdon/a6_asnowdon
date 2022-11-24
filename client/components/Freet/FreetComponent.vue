@@ -10,6 +10,7 @@
         <router-link :to="{ name: 'visitingAccount', params: { username: freet.author } }">
           @{{ freet.author }}
         </router-link>
+        {{$store.state.likes}}
 
       </h3>
       <div
@@ -115,6 +116,7 @@ export default {
     };
   },
   created() {
+    //this.$store.commit('refreshLikes');
     this.$store.state.likes.forEach(like => {
       if(like.freetId  === this.freet._id){
         this.alreadyLiked = true;
@@ -207,7 +209,7 @@ export default {
           this.$store.commit('refreshFreets');
           this.$store.commit('refreshLikes');
 
-          this.$store.commit('addLike',like)
+          this.$store.commit('addLike',like.like)
           this.alreadyLiked = true
           // this.likesCount += 1;
 
@@ -226,9 +228,11 @@ export default {
         callback: (res) => {
           this.$set(this.alerts, params.message, 'success');
           setTimeout(() => this.$delete(this.alerts, params.message), 3000);
-          this.alreadyLiked = false;
           this.$store.commit('refreshFreets');
-          // this.likesCount -= 1;
+          this.$store.commit('refreshLikes');
+          this.$store.commit('delLike', this.freet._id);
+          this.alreadyLiked = false;
+
         }
       };
       this.reactFreet(params);

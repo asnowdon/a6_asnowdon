@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue, { del } from 'vue';
 import Vuex from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
 
@@ -112,6 +112,23 @@ const store = new Vuex.Store({
        * @param like - like to store
        */
       state.likes.push(like);
+    },
+    delLike(state,freetId) {
+      /**
+       * Update the stored likes to include the provided like.
+       * @param like - like to store
+       */
+      //  state.likes.forEach(like => {
+      //     if(like.freetId ==== freetId){
+            
+      //     }
+      // });
+      for(let i = 0; i < state.likes.length; i++){
+        let like = state.likes[i];
+        if(like.freetId===freetId){
+          delete state.likes[i];
+        }
+      }
     },
     async refreshLikes(state) {
       /**
