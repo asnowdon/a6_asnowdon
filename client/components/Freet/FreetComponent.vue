@@ -10,7 +10,7 @@
         <router-link :to="{ name: 'visitingAccount', params: { username: freet.author } }">
           @{{ freet.author }}
         </router-link>
-        {{$store.state.likes}}
+        <!-- {{$store.state.likes}} -->
 
       </h3>
       <div
